@@ -1,0 +1,23 @@
+#O(nlogn) time | O(n) space
+
+def mergeOverlappingIntervals(intervals):
+    sortedIntervals = sorted(intervals, key = lambda x: x[0]) 
+    #sorting intervals by there first value
+
+    mergedIntervals = []
+    currentInterval = sortedIntervals[0]
+
+    mergedIntervals.append(currentInterval)
+
+    for nextInterval in sortedIntervals:
+        _, currentIntervalEnd = currentInterval
+        #we do not care about the current intervalStart, just need the end value to compare
+        nextIntervalStart, nextIntervalEnd = nextInterval
+
+        if currentIntervalEnd >= nextIntervalStart:
+            currentInterval[1] = max(currentIntervalEnd, nextIntervalEnd)
+        else:
+            currentInterval = nextInterval
+            mergedIntervals.append(currentInterval)
+            
+    return mergedIntervals
