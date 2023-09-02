@@ -1,0 +1,73 @@
+#O(n + m) time | O(1) space - where n is the length of arrayOne and m is the length of arrayTwo
+
+def medianOfTwoSortedArrays(arrayOne, arrayTwo):
+    idxOne, idxTwo = 0, 0
+    middleIdx = (len(arrayOne) + len(arrayTwo) - 1) // 2
+
+    while idxOne + idxTwo < middleIdx:
+        if idxOne >= len(arrayOne):
+            idxTwo += 1
+        elif idxTwo >= len(arrayTwo):
+            idxOne += 1
+        elif arrayOne[idxOne] < arrayTwo[idxTwo]:
+            idxOne += 1
+        else: 
+            idxTwo += 1
+
+    if (len(arrayOne) + len(arrayTwo)) % 2 == 0:
+        areBothValuesArrayOne = idxTwo >= len(arrayTwo) or (
+        idxOne + 1 < len(arrayOne) and arrayTwo[idxTwo] > arrayOne[idxOne + 1]
+        )
+        areBothValuesArrayTwo = idxOne >= len(arrayOne) or (
+            idxTwo + 1 < len(arrayTwo) and arrayOne[idxOne] > arrayTwo[idxTwo + 1]
+        )
+
+        valueOne = arrayOne[idxOne + 1] if areBothValuesArrayOne else arrayTwo[idxTwo]
+        valueTwo = arrayTwo[idxTwo + 1] if areBothValuesArrayTwo else arrayOne[idxOne]
+        return (valueOne + valueTwo) / 2
+
+    valueOne = arrayOne[idxOne] if idxOne < len(arrayOne) else float("inf")
+    valueTwo = arrayTwo[idxTwo] if idxTwo < len(arrayTwo) else float("inf")
+
+    return min(valueOne, valueTwo)
+
+##########################################################
+#O(log(min(n, m))) time | O(1) space - where n is the length of arrayOne and m is the length of arrayTwo
+
+def medianOfTwoSortedArrays(arrayOne, arrayTwo):
+    smallArray = arrayOne if len(arrayOne) <= len(arrayTwo) else arrayTwo
+    bigArray = arrayOne if len(arrayOne) > len(arrayTwo) else arrayTwo
+
+    leftIdx = 0
+    rightIdx = len(smallArray) - 1
+    mergedLeftIdx = (len(smallArray) + len(bigArray) - 1) // 2
+
+    while True:
+        smallPartitionIdx = (leftIdx + rightIdx) // 2
+        bigPartitionIdx = mergedLeftIdx - smallPartitionIdx - 1
+
+        smallMaxLeftValue = (
+            smallArray[smallPartitionIdx] if smallPartitionIdx >= 0 else float("-inf")
+        )
+
+        smallMinRightValue = (
+            smallArray[smallPartitionIdx + 1]
+            if smallPartitionIdx + 1 < len(smallArray)
+            else float("inf")
+        )
+        bigMaxLeftValue = bigArray[bigPartitionIdx] if bigPartitionIdx >= 0 else float("-inf")
+        bigMinRightValue = (
+            bigArray[bigPartitionIdx + 1] if bigPartitionIdx + 1 < len(bigArray) else float("inf")
+        )
+
+        if smallMaxLeftValue > bigMinRightValue:
+            rightIdx = smallPartitionIdx - 1
+        elif bigMaxLeftValue > smallMinRightValue:
+            leftIdx = smallPartitionIdx + 1
+        else:
+            if (len(smallArray) + len(bigArray)) % 2 == 0:
+                return (
+                    max(smallMaxLeftValue, bigMaxLeftValue) + min(smallMinRightValue, bigMinRightValue)
+                ) / 2
+            return max(smallMaxLeftValue, bigMaxLeftValue)
+            
