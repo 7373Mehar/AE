@@ -1,0 +1,29 @@
+#O(w * h) time | O(w) space - where w is the width of the input matrix and h is the height of the input matrix
+
+def largestPark(land):
+    heights = [0] *  len(land[0])
+    maxArea = 0
+
+    for row in land:
+        for columnIndex in range(len(land[0])):
+            heights[columnIndex] = heights[columnIndex] + 1 if row[columnIndex] == False else 0
+        maxArea = max(maxArea, largestRectangleHistogram(heights))
+    return maxArea
+
+def largestRectangleHistogram(heights):
+    stack = []
+    maxArea = 0
+
+    for columnIndex in range(len(heights)):
+        while len(stack) > 0 and heights[columnIndex] < heights[stack[-1]]:
+            height = heights[stack.pop()]
+            width = columnIndex if len(stack) == 0 else columnIndex - stack[-1] - 1
+            maxArea = max(maxArea, width * height)
+        stack.append(columnIndex)
+
+    while len(stack) > 0:
+        height = heights[stack.pop()]
+        width = len(heights) if len(stack) == 0 else len(heights) - stack[-1] - 1
+        maxArea = max(maxArea, width * height)
+
+    return maxArea
